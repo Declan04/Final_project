@@ -12,7 +12,7 @@ layout_tiles = layout1.get_tiles()
 player_group = pygame.sprite.GroupSingle()
 player = sprites.Player(100, 500, TILE_SIZE, layout_tiles)
 player_group.add(player)
-
+xxmmm
 while playing:
 
     clock.tick(FPS)
