@@ -88,6 +88,7 @@ class Layout:
         rock_item = tile_sheet.image_at((257, 101, 12, 16))
 
         self.tile_list = []
+        self.enemy_group = pygame.sprite.Group()
         for i, row in enumerate(layout1):
             for j, col in enumerate(row):
                 x_val = j * TILE_SIZE
@@ -124,10 +125,22 @@ class Layout:
                     image_rect.y = y_val
                     tile = (rock_item, image_rect)
                     self.tile_list.append(tile)
+                # if col == "6":
+                #     if layout1[i + 1]:
+                #         plat_row = layout1[i + 1]
+                #         count = 0
+                #         for plat in plat_row:
+                #             if plat == '2':
+                #                 count += 1
+                #     enemy = Enemy(x_val, y_val, count)
+                #     self.enemy_group.add(enemy)
 
     def update(self, display):
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
+        # enemies = self.enemy_group.sprites()
+        # for enemy in enemies:
+        #     enemy.enemy_movement(self.tile_list)
 
     def get_tiles(self):
         return self.tile_list
@@ -140,19 +153,19 @@ class Player(pygame.sprite.Sprite):
 
         # image set for the player
         self.run_right = []
-        self.run_rt = character_sheet.image_at((6, 73, 20, 25))
+        self.run_rt = character_sheet.image_at((6, 73, 20, 25), -1)
         self.run_right.append(self.run_rt)
-        self.run_rt1 = character_sheet.image_at((38, 72, 21, 26))
+        self.run_rt1 = character_sheet.image_at((38, 72, 21, 26), -1)
         self.run_right.append(self.run_rt1)
-        self.run_rt2 = character_sheet.image_at((70, 70, 21, 31))
+        self.run_rt2 = character_sheet.image_at((70, 70, 21, 31), -1)
         self.run_right.append(self.run_rt2)
-        self.run_rt3 = character_sheet.image_at((101, 68, 22, 32))
+        self.run_rt3 = character_sheet.image_at((101, 68, 22, 32), -1)
         self.run_right.append(self.run_rt3)
-        self.run_rt4 = character_sheet.image_at((486, 72, 20, 27))
+        self.run_rt4 = character_sheet.image_at((486, 72, 20, 27), -1)
         self.run_right.append(self.run_rt4)
-        self.run_rt5 = character_sheet.image_at((518, 70, 20, 30))
+        self.run_rt5 = character_sheet.image_at((518, 70, 20, 30), -1)
         self.run_right.append(self.run_rt5)
-        self.run_rt6 = character_sheet.image_at((550, 71, 20, 30))
+        self.run_rt6 = character_sheet.image_at((550, 71, 20, 30), -1)
         self.run_right.append(self.run_rt6)
         self.run_left = [pygame.transform.flip(image, True, False) for image in self.run_right]
         self.index = 0
@@ -164,8 +177,16 @@ class Player(pygame.sprite.Sprite):
         self.image_delay = 100
         self.rect.x = x
         self.rect.y = y
+        self.dx = 0
+        self.y_velo = 0
+        self.x_velo = 0
         self.right = False
         self.left = False
+        self.jumping = False
+
+    def jump(self):
+        self.y_velo = -30
+        self.jumping = True
 
     def update(self, display):
         dy = 0
@@ -183,3 +204,77 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.index += 1
                 self.image = self.run_right[self.index]
+
+        elif keys[pygame.K_LEFT]:
+            self.dx = -5
+            self.left = True
+            self.right = False
+            now = pygame.time.get_ticks()
+            if now - self.image_delay >= self.last:
+                self.last = now
+                if self.index >= len(self.run_left) - 1:
+                    self.index = 0
+                else:
+                    self.index += 1
+                self.image = self.run_left[self.index]
+        else:
+            self.dx = 0
+
+        self.y_velo += 1
+        if self.y_velo > 10:
+            self.y_velo = 10
+        dy += self.y_velo
+
+        for tile in self.tile:
+            if len(tile) <= 2:
+
+                if tile[1].colliderect(self.rect.x + self.dx, self.rect.y, self.rect.width, self.rect.height):
+                    self.dx = 0
+                if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.rect.width, self.rect.height):
+
+                    if dy > 0:
+                        dy = tile[1].top - self.rect.bottom
+                        self.jumping = False
+                    if dy < 0:
+                        dy = self.rect.top - tile[1].bottom
+
+
+        self.rect.x += self.dx
+        self.rect.y += dy
+        display.blit(self.image, self.rect)
+
+
+# class Enemy(pygame.sprite.Sprite):
+#     def __init__(self, x, y, platforms):
+#         pygame.sprite.Sprite.__init__(self)
+#         enemy_sheet = SpriteSheet("skeleton_7.png")
+#
+#         self.enemy_right = []
+#         self.enemy_rt1 = enemy_sheet.image_at((38, 6, 32, 67))
+#         self.enemy_right.append(self.enemy_rt1)
+#         self.enemy_rt2 = enemy_sheet.image_at((74, 4, 31, 66))
+#         self.enemy_right.append(self.enemy_rt2)
+#         self.enemy_rt3 = enemy_sheet.image_at((107, 7, 33, 65))
+#         self.enemy_right.append(self.enemy_rt3)
+#         self.enemy_rt4 = enemy_sheet.image_at((143, 6, 31, 68))
+#         self.enemy_right.append(self.enemy_rt4)
+#         self.rect = self.image.get_rect()
+#         self.rect.x = x
+#         self.rect.y = y
+#         self.ex = 5
+#         self.ey = 0
+#         self.platforms = platforms
+#         self.plat_size = TILE_SIZE * self.platforms
+#
+#     def update(self, display):
+#         display.blit(self.image, self.rect)
+#
+#     def enemy_movement(self, tiles):
+#         self.rect.x += self.ex
+#         for tile in tiles:
+#             if tile[1].colliderect(self.rect.x + self.ex, self.rect.y, self.rect.width, self.rect.height):
+#                 self.ex *= -1
+#         if self.rect.x == WIN_WIDTH:
+#             self.ex += -5
+#         elif self.rect.x == WIN_WIDTH * 0:
+#             self.ex += 5

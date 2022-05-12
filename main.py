@@ -10,9 +10,11 @@ clock = pygame.time.Clock()
 layout1 = sprites.Layout(screen)
 layout_tiles = layout1.get_tiles()
 player_group = pygame.sprite.GroupSingle()
-player = sprites.Player(100, 500, TILE_SIZE, layout_tiles)
+player = sprites.Player(2300, 500, TILE_SIZE, layout_tiles)
 player_group.add(player)
-xxmmm
+#enemy_group = layout1.get_enemy_group()
+#enemy_list = enemy_group.sprites()
+
 while playing:
 
     clock.tick(FPS)
@@ -23,10 +25,13 @@ while playing:
         if event.type == pygame.KEYDOWN:  # allow for q key to quit the game
             if event.key == pygame.K_q:
                 playing = False
+        if event.key == pygame.K_UP and not player.jumping:
+            player.jump()
 
     screen.fill(BLUE)
     layout1.update(screen)
-    player.update(screen)
+    player_group.update(screen)
+    #enemy_group.update(screen)
 
     pygame.display.flip()
 
