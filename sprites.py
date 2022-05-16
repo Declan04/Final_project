@@ -125,25 +125,28 @@ class Layout:
                     image_rect.y = y_val
                     tile = (rock_item, image_rect)
                     self.tile_list.append(tile)
-                # if col == "6":
-                #     if layout1[i + 1]:
-                #         plat_row = layout1[i + 1]
-                #         count = 0
-                #         for plat in plat_row:
-                #             if plat == '2':
-                #                 count += 1
-                #     enemy = Enemy(x_val, y_val, count)
-                #     self.enemy_group.add(enemy)
+                if col == "6":
+                    if layout1[i + 1]:
+                        plat_row = layout1[i + 1]
+                        count = 0
+                        for plat in plat_row:
+                            if plat == '2':
+                                count += 1
+                    enemy = Enemy(x_val, y_val, count)
+                    self.enemy_group.add(enemy)
 
     def update(self, display):
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
-        # enemies = self.enemy_group.sprites()
-        # for enemy in enemies:
-        #     enemy.enemy_movement(self.tile_list)
+        enemies = self.enemy_group.sprites()
+        for enemy in enemies:
+            enemy.enemy_movement(self.tile_list)
 
     def get_tiles(self):
         return self.tile_list
+
+    def get_enemy_group(self):
+        return self.enemy_group
 
 
 class Player(pygame.sprite.Sprite):
@@ -185,7 +188,7 @@ class Player(pygame.sprite.Sprite):
         self.jumping = False
 
     def jump(self):
-        self.y_velo = -30
+        self.y_velo = -20
         self.jumping = True
 
     def update(self, display):
@@ -238,43 +241,33 @@ class Player(pygame.sprite.Sprite):
                     if dy < 0:
                         dy = self.rect.top - tile[1].bottom
 
-
         self.rect.x += self.dx
         self.rect.y += dy
         display.blit(self.image, self.rect)
 
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y, platforms):
+        pygame.sprite.Sprite.__init__(self)
+        enemy_sheet = SpriteSheet("skeleton_7.png")
 
-# class Enemy(pygame.sprite.Sprite):
-#     def __init__(self, x, y, platforms):
-#         pygame.sprite.Sprite.__init__(self)
-#         enemy_sheet = SpriteSheet("skeleton_7.png")
-#
-#         self.enemy_right = []
-#         self.enemy_rt1 = enemy_sheet.image_at((38, 6, 32, 67))
-#         self.enemy_right.append(self.enemy_rt1)
-#         self.enemy_rt2 = enemy_sheet.image_at((74, 4, 31, 66))
-#         self.enemy_right.append(self.enemy_rt2)
-#         self.enemy_rt3 = enemy_sheet.image_at((107, 7, 33, 65))
-#         self.enemy_right.append(self.enemy_rt3)
-#         self.enemy_rt4 = enemy_sheet.image_at((143, 6, 31, 68))
-#         self.enemy_right.append(self.enemy_rt4)
-#         self.rect = self.image.get_rect()
-#         self.rect.x = x
-#         self.rect.y = y
-#         self.ex = 5
-#         self.ey = 0
-#         self.platforms = platforms
-#         self.plat_size = TILE_SIZE * self.platforms
-#
-#     def update(self, display):
-#         display.blit(self.image, self.rect)
-#
-#     def enemy_movement(self, tiles):
-#         self.rect.x += self.ex
-#         for tile in tiles:
-#             if tile[1].colliderect(self.rect.x + self.ex, self.rect.y, self.rect.width, self.rect.height):
-#                 self.ex *= -1
-#         if self.rect.x == WIN_WIDTH:
-#             self.ex += -5
-#         elif self.rect.x == WIN_WIDTH * 0:
-#             self.ex += 5
+        self.image = enemy_sheet.image_at((38, 6, 32, 67))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.ex = 5
+        self.ey = 0
+        self.platforms = platforms
+        self.plat_size = TILE_SIZE * self.platforms
+
+    def update(self, display):
+        display.blit(self.image, self.rect)
+
+    def enemy_movement(self, tiles):
+        self.rect.x += self.ex
+        for tile in tiles:
+            if tile[1].colliderect(self.rect.x + self.ex, self.rect.y, self.rect.width, self.rect.height):
+                self.ex *= -1
+        if self.rect.x == WIN_WIDTH:
+            self.ex += -5
+        elif self.rect.x == WIN_WIDTH * 0:
+            self.ex += 5
