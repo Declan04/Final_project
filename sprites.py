@@ -134,6 +134,11 @@ class Layout:
                                 count += 1
                     enemy = Enemy(x_val, y_val, count)
                     self.enemy_group.add(enemy)
+                # if col == '7':
+                #     exit = Exit(x_val, y_val)
+                #     tile = (exit.self_image, exit.rect, '7')
+                #     self.tile_list.append(tile)
+                #     self.exit_group.add(exit)
 
     def update(self, display):
         for tile in self.tile_list:
@@ -141,12 +146,16 @@ class Layout:
         enemies = self.enemy_group.sprites()
         for enemy in enemies:
             enemy.enemy_movement(self.tile_list)
+            # self.exit_group.update(display)
 
     def get_tiles(self):
         return self.tile_list
 
     def get_enemy_group(self):
         return self.enemy_group
+
+    # def get_exit_group(self):
+    #     return self.exit_group
 
 
 class Player(pygame.sprite.Sprite):
@@ -186,10 +195,25 @@ class Player(pygame.sprite.Sprite):
         self.right = False
         self.left = False
         self.jumping = False
+        self.camera_shift = 0
 
     def jump(self):
         self.y_velo = -20
         self.jumping = True
+
+    def camera(self):
+        if self.rect.right >= WIN_WIDTH - 200 and self.right:
+            self.dx = 0
+            self.camera_shift = -5
+            self.rect.right = WIN_WIDTH - 200
+        elif self.rect.left <= 200 and self.left:
+            self.dx = 0
+            self.camera_shift = 5
+            self.rect.left = 200
+        else:
+            self.camera_shift = 0
+        for tile in self.tile:
+            tile[1].x += self.camera_shift
 
     def update(self, display):
         dy = 0
@@ -198,6 +222,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT]:
             self.dx = 5
             self.right = True
+            self.camera()
             self.left = False
             now = pygame.time.get_ticks()
             if now - self.image_delay >= self.last:
@@ -211,6 +236,7 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_LEFT]:
             self.dx = -5
             self.left = True
+            self.camera()
             self.right = False
             now = pygame.time.get_ticks()
             if now - self.image_delay >= self.last:
@@ -245,6 +271,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += dy
         display.blit(self.image, self.rect)
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, platforms):
         pygame.sprite.Sprite.__init__(self)
@@ -271,3 +298,18 @@ class Enemy(pygame.sprite.Sprite):
             self.ex += -5
         elif self.rect.x == WIN_WIDTH * 0:
             self.ex += 5
+
+
+class Exit(pygame.sprite.Sprite):
+    def __init__(self, display,x,y):
+        pygame.sprite.Sprite.__init__(self)
+        exit_sheet = SpriteSheet('animated_wooden_castle_door.png')
+
+        self.image = exit_sheet.image_at((65, 3, 62, 61))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+
+    def update(self, display):
+        display.blit(self.image,(self.rect.x, self.rect.y))

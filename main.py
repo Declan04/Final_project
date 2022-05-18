@@ -28,6 +28,11 @@ while playing:
             if event.key == pygame.K_UP and not player.jumping:
                 player.jump()
 
+    enemy_collisions = pygame.sprite.spritecollide(player, enemy_group, True)
+    if enemy_collisions:
+        player.kill()
+        print('Game over')
+
     screen.fill(BLUE)
     layout1.update(screen)
     player_group.update(screen)
