@@ -135,8 +135,8 @@ class Layout:
                     enemy = Enemy(x_val, y_val, count)
                     self.enemy_group.add(enemy)
                 # if col == '7':
-                #     exit = Exit(x_val, y_val)
-                #     tile = (exit.self_image, exit.rect, '7')
+                #     exit = Exit(x_val, x_val, y_val)
+                #     tile = (layout1, Exit.exit, '7')
                 #     self.tile_list.append(tile)
                 #     self.exit_group.add(exit)
 
@@ -146,7 +146,6 @@ class Layout:
         enemies = self.enemy_group.sprites()
         for enemy in enemies:
             enemy.enemy_movement(self.tile_list)
-            # self.exit_group.update(display)
 
     def get_tiles(self):
         return self.tile_list
@@ -301,15 +300,15 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Exit(pygame.sprite.Sprite):
-    def __init__(self, display,x,y):
+    def __init__(self, display, x, y):
         pygame.sprite.Sprite.__init__(self)
         exit_sheet = SpriteSheet('animated_wooden_castle_door.png')
 
-        self.image = exit_sheet.image_at((65, 3, 62, 61))
+        self.exit = exit_sheet.image_at((65, 3, 62, 61))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-
+        self.display = display
 
     def update(self, display):
-        display.blit(self.image,(self.rect.x, self.rect.y))
+        display.blit(self.image, (self.rect.x, self.rect.y))

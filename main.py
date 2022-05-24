@@ -31,7 +31,13 @@ while playing:
     enemy_collisions = pygame.sprite.spritecollide(player, enemy_group, True)
     if enemy_collisions:
         player.kill()
-        print('Game over')
+        player_group.add(player)
+        player_group.update(player)
+
+
+    # exit_collisions = pygame.sprite.spritecollide(player, exit_grp, True)
+    # if exit_collisions:
+    #     print(layout2)
 
     screen.fill(BLUE)
     layout1.update(screen)
