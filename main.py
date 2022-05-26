@@ -28,12 +28,20 @@ while playing:
             if event.key == pygame.K_UP and not player.jumping:
                 player.jump()
 
+    def lives(self):
+        counter = 3
+
+        if player == enemy_list:
+            counter -= 1
+        if counter == 0:
+            player.kill()
+
     enemy_collisions = pygame.sprite.spritecollide(player, enemy_group, True)
     if enemy_collisions:
         player.kill()
+        player = sprites.Player(500, 500, TILE_SIZE, layout_tiles)
         player_group.add(player)
-        player_group.update(player)
-
+        print(lives(player))
 
     # exit_collisions = pygame.sprite.spritecollide(player, exit_grp, True)
     # if exit_collisions:

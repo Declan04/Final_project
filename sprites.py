@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+# import main
 
 screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
@@ -269,6 +270,14 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.dx
         self.rect.y += dy
         display.blit(self.image, self.rect)
+
+    # def lives(self):
+    #     counter = 3
+    #
+    #     if Player == main.enemy_collisions:
+    #         counter -= 1
+    #     if counter == 0:
+    #         Player.kill()
 
 
 class Enemy(pygame.sprite.Sprite):
