@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+
 # import main
 
 screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -80,6 +81,7 @@ class Layout:
         self.display = display
         tile_sheet = SpriteSheet('sheet.png')
         rusty_box = SpriteSheet('Rusty Crate.png')
+        coin_sheet = SpriteSheet('01coin.png')
 
         # blocks and tiles for the game
         plain_block = tile_sheet.image_at((128, 1, 54, 16))
@@ -87,9 +89,13 @@ class Layout:
         rockplatform_block = tile_sheet.image_at((159, 1, 48, 16))
         caverock_block = tile_sheet.image_at((160, 31, 49, 16))
         rock_item = tile_sheet.image_at((257, 101, 12, 16))
+        coin = coin_sheet.image_at((11, 10, 100, 107))
+        coin = pygame.transform.scale(coin, (25, 25))
 
         self.tile_list = []
         self.enemy_group = pygame.sprite.Group()
+        # self.coin_group = pygame.sprite.Group()
+        self.coin_list = []
         for i, row in enumerate(layout1):
             for j, col in enumerate(row):
                 x_val = j * TILE_SIZE
@@ -140,6 +146,13 @@ class Layout:
                 #     tile = (layout1, Exit.exit, '7')
                 #     self.tile_list.append(tile)
                 #     self.exit_group.add(exit)
+                if col == "8":
+                    image_rect = coin.get_rect()
+                    image_rect.x = x_val
+                    image_rect.y = y_val
+                    tile = (coin, image_rect, 'COIN')
+                    self.tile_list.append(tile)
+
 
     def update(self, display):
         for tile in self.tile_list:
@@ -153,6 +166,10 @@ class Layout:
 
     def get_enemy_group(self):
         return self.enemy_group
+
+    def get_coin_group(self):
+        # return self.coin_group
+        return self.coin_list
 
     # def get_exit_group(self):
     #     return self.exit_group
@@ -321,3 +338,5 @@ class Exit(pygame.sprite.Sprite):
 
     def update(self, display):
         display.blit(self.image, (self.rect.x, self.rect.y))
+
+
