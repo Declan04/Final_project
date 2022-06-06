@@ -90,7 +90,7 @@ class Layout:
         caverock_block = tile_sheet.image_at((160, 31, 49, 16))
         rock_item = tile_sheet.image_at((257, 101, 12, 16))
         coin = coin_sheet.image_at((11, 10, 100, 107))
-        coin = pygame.transform.scale(coin, (25, 25))
+        coin = pygame.transform.scale(coin, (30, 30))
 
         self.tile_list = []
         self.enemy_group = pygame.sprite.Group()
