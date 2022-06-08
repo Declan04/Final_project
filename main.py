@@ -19,6 +19,7 @@ coin_group = layout1.get_coin_group()
 coin_list = layout1.get_coin_group()
 HEALTH_TEXT = HEALTH_FONT.render(f'3', True, WHITE)
 POINTS_TEXT = POINTS_FONT.render(f'0', True, WHITE)
+GAME_OVER_TEXT = GAME_OVER_FONT.render(f'GAME OVER', True, WHITE)
 life_counter = 3
 points = 0
 blank = pg.Surface((30, 30))
@@ -46,14 +47,13 @@ while playing:
         player_group.add(player)
     if life_counter == 0:
         player.kill()
-        playing = False
+        GAME_OVER_TEXT = GAME_OVER_FONT.render(f'GAME OVER', True, WHITE)
 
     for tile in layout_tiles:
         if tile[-1] == 'COIN':
             if tile[1].colliderect(player.rect.x, player.rect.y, player.rect.width, player.rect.height):
                 points += 10
                 POINTS_TEXT = POINTS_FONT.render(f'{points}', True, WHITE)
-                tile = (blank, (player.rect.x, player.rect.y), '')
 
     screen.fill(BLUE)
     layout1.update(screen)
